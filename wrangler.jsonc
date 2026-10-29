@@ -1,0 +1,97 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "morphie",
+	// Custom entry = the OpenNext-generated Next.js handler + the Coordinator Durable Object.
+	"main": "worker/index.ts",
+	// Keep on or after the date you first deploy; nodejs_compat needs >= 2024-09-23.
+	"compatibility_date": "2026-09-15",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true
+	},
+	// Non-secret configuration. Secrets (ENCRYPTION_KEY, SESSION_SECRET, TAVILY_API_KEY) are NOT set here:
+	// use `wrangler secret put` (see README → Deploying to Cloudflare).
+	"vars": {
+		// A Worker cannot reach localhost/LAN, and users must not be able to aim the server at private ranges.
+		"MORPHIE_ALLOW_PRIVATE_URLS": "false",
+		"MORPHIE_MAX_UPLOAD_MB": "10",
+		"MORPHIE_MAX_AGENT_STEPS": "300"
+		// Optional, only behind unusual proxies / custom domains on another origin:
+		// "MORPHIE_ALLOWED_ORIGINS": "https://morphie.example.com"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "morphie",
+			// Replace with the id printed by `npx wrangler d1 create morphie`.
+			"database_id": "YOUR_D1_DATABASE_ID",
+			"migrations_dir": "migrations"
+		},
+		{
+			"binding": "morphie",
+			"database_name": "morphie",
+			"database_id": "YOUR_D1_DATABASE_ID",
+			"remote": true
+		}
+	],
+	// Files that aren't rows (the agent's workspace). Create once: npx wrangler r2 bucket create morphie-files
+	"r2_buckets": [
+		{
+			"binding": "FILES",
+			"bucket_name": "morphie-files"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "COORDINATOR",
+				"class_name": "Coordinator"
+			},
+			// One Durable Object per conversation: hosts its agent runs so they keep going after the tab closes (worker/index.ts).
+			{
+				"name": "AGENT_RUNNER",
+				"class_name": "AgentRunner"
+			},
+			// One Durable Object + Linux container per code project (worker/sandbox.ts).
+			{
+				"name": "SANDBOX",
+				"class_name": "MorphieSandbox"
+			}
+		]
+	},
+	// The code-project container. Needs the Workers Paid plan, and Docker running when you deploy (it builds sandbox/Dockerfile).
+	// Don't want code projects on Cloudflare yet? Delete this block, the SANDBOX binding above and MorphieSandbox below.
+	"containers": [
+		{
+			"class_name": "MorphieSandbox",
+			"scheduling_policy": "durable_object",
+			"images": {
+				"sandbox": {
+					"dockerfile": "./sandbox/Dockerfile"
+				}
+			}
+		}
+	],
+	// Current declarative form of Durable Object class lifecycle (replaces the legacy "migrations" array).
+	// Older Wrangler? Use instead:  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Coordinator"] }]
+	"exports": {
+		"Coordinator": {
+			"type": "durable-object",
+			"storage": "sqlite"
+		},
+		"MorphieSandbox": {
+			"type": "durable-object",
+			"storage": "sqlite"
+		},
+		"AgentRunner": {
+			"type": "durable-object",
+			"storage": "sqlite"
+		}
+	}
+}

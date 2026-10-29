@@ -1,0 +1,32 @@
+node_modules
+.next
+data/*
+!data/.gitkeep
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+
+# local state and secrets must never ship
+*.db
+*.db-wal
+*.db-shm
+.encryption_key
+.session_secret
+*.pem
+morphie.zip
+.env.*
+!.env.example
+
+# Cloudflare / OpenNext: build output and local Worker secrets must never be committed
+.open-next
+.wrangler
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+.open-next
+.dev.vars
+.env
+.env.*
+.wrangler

@@ -1,0 +1,12 @@
+# Local development secrets for `npm run dev` and `npm run preview` (copy to .dev.vars, which is git-ignored).
+# Production uses real Worker secrets instead: `npx wrangler secret put ENCRYPTION_KEY` etc.
+# Generate each value with:  openssl rand -base64 32
+
+ENCRYPTION_KEY=replace-me-with-a-long-random-string
+SESSION_SECRET=replace-me-with-a-different-long-random-string
+
+# Optional fallback web-search key (each user can also add their own in Settings -> Tools).
+# TAVILY_API_KEY=
+
+# Local only: let the server call Ollama / LM Studio on localhost. NEVER set this in production.
+# MORPHIE_ALLOW_PRIVATE_URLS=true

@@ -1,0 +1,180 @@
+{
+ "components": {
+  "navbar": {
+   "label": "Navbar",
+   "description": "Sticky top bar with brand, up to 6 links, and an optional call-to-action button. Must be first.",
+   "css": "\n.mf-nav{position:sticky;top:0;z-index:30;background:var(--mf-bg-glass);-webkit-backdrop-filter:saturate(1.4) blur(12px);backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--mf-border)}\n.mf-nav__inner{position:relative;display:flex;align-items:center;gap:1.25rem;min-height:4.25rem}\n.mf-nav__brand{margin-right:auto;font-family:var(--mf-font-heading);font-weight:var(--mf-heading-weight);font-size:1.2rem;letter-spacing:-.01em;color:var(--mf-text);text-decoration:none}\n.mf-nav__links{display:flex;align-items:center;gap:1.75rem}\n.mf-nav__links a:not(.mf-btn){color:var(--mf-muted);text-decoration:none;font-size:.95rem;font-weight:500;transition:color .15s}\n.mf-nav__links a:not(.mf-btn):hover{color:var(--mf-text)}\n.mf-nav__links .mf-btn{padding:.6rem 1.1rem;font-size:.9rem}\n.mf-nav__toggle{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}\n.mf-nav__burger{display:none;position:relative;align-items:center;justify-content:center;width:2.5rem;height:2.5rem;border:1px solid var(--mf-border-strong);border-radius:var(--mf-radius-ctl);cursor:pointer}\n.mf-nav__burger span,.mf-nav__burger span::before,.mf-nav__burger span::after{display:block;position:relative;width:1.05rem;height:2px;background:var(--mf-text);border-radius:2px;content:\"\"}\n.mf-nav__burger span::before{position:absolute;top:-.35rem;left:0}\n.mf-nav__burger span::after{position:absolute;top:.35rem;left:0}\n.mf-nav__toggle:focus-visible + .mf-nav__burger{outline:2px solid var(--mf-accent);outline-offset:2px}\n",
+   "css_tablet": "\n.mf-nav__links{gap:1.1rem}\n.mf-nav__links a:not(.mf-btn){font-size:.9rem}\n",
+   "css_mobile": "\n.mf-nav-collapse .mf-nav__burger{display:inline-flex}\n.mf-nav-collapse .mf-nav__links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:.25rem;padding:.75rem 1rem 1rem;background:var(--mf-surface);border-bottom:1px solid var(--mf-border);box-shadow:var(--mf-shadow)}\n.mf-nav-collapse .mf-nav__toggle:checked ~ .mf-nav__links{display:flex}\n.mf-nav-collapse .mf-nav__links a:not(.mf-btn){padding:.75rem .5rem;font-size:1rem}\n.mf-nav-collapse .mf-nav__links .mf-btn{margin-top:.5rem}\n.mf-nav-stack .mf-nav__inner{flex-wrap:wrap;padding-block:.75rem;row-gap:.5rem}\n.mf-nav-stack .mf-nav__links{width:100%;flex-wrap:wrap;gap:.25rem 1.1rem}\n",
+   "example": {
+    "type": "navbar",
+    "brand": "Acme",
+    "links": [
+     {
+      "label": "Features"
+     },
+     {
+      "label": "Pricing"
+     }
+    ],
+    "cta": "Get started"
+   }
+  },
+  "hero": {
+   "label": "Hero",
+   "description": "Opening statement: headline, supporting line, one or two buttons. size md|lg|xl controls the headline scale; layout 'split' adds a decorative product panel beside the copy.",
+   "css": "\n.mf-hero{position:relative;overflow:hidden}\n.mf-hero::before{content:\"\";position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 0%,var(--mf-glow),transparent 72%);pointer-events:none}\n.mf-hero__inner{position:relative;display:grid;gap:3.5rem;align-items:center}\n.mf-hero--centered .mf-hero__inner{text-align:center;justify-items:center}\n.mf-hero--centered .mf-hero__visual{display:none}\n.mf-hero--centered .mf-hero__title,.mf-hero--centered .mf-hero__subtitle{margin-inline:auto}\n.mf-hero--split .mf-hero__inner{grid-template-columns:1.05fr .95fr}\n.mf-hero__title{max-width:18ch;text-wrap:balance;letter-spacing:-.025em;line-height:1.04}\n.mf-hero--split .mf-hero__title{max-width:none}\n.mf-hero__subtitle{margin-top:1.4rem;max-width:38rem;font-size:1.15rem;color:var(--mf-muted);text-wrap:pretty}\n.mf-hero__copy .mf-badge{margin-bottom:1.4rem}\n.mf-hero__actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2.1rem}\n.mf-hero--centered .mf-hero__actions{justify-content:center}\n.mf-vis{display:grid;gap:1.1rem;padding:1.1rem 1.25rem 1.5rem;background:var(--mf-surface);border:1px solid var(--mf-border);border-radius:var(--mf-radius);box-shadow:var(--mf-shadow)}\n.mf-vis__dots{display:flex;gap:.4rem}\n.mf-vis__dots i{width:.6rem;height:.6rem;border-radius:50%;background:var(--mf-border-strong)}\n.mf-vis__row{display:flex;align-items:center;gap:.75rem}\n.mf-vis__pill{flex:0 0 2.2rem;height:2.2rem;border-radius:var(--mf-radius-ctl);background:var(--mf-primary)}\n.mf-vis__line{flex:1;height:.65rem;border-radius:999px;background:var(--mf-border-strong)}\n.mf-vis__line--short{flex:0 0 45%}\n.mf-vis__chart{display:flex;align-items:flex-end;gap:.55rem;height:9rem;padding-top:.5rem}\n.mf-vis__chart span{flex:1;border-radius:6px 6px 2px 2px;background:linear-gradient(var(--mf-primary),var(--mf-secondary))}\n.mf-vis__chart span:nth-child(1){height:34%}.mf-vis__chart span:nth-child(2){height:52%}\n.mf-vis__chart span:nth-child(3){height:41%}.mf-vis__chart span:nth-child(4){height:68%}\n.mf-vis__chart span:nth-child(5){height:58%}.mf-vis__chart span:nth-child(6){height:86%}\n.mf-vis__chart span:nth-child(7){height:76%}\n.mf-hero--md{padding-block:4.5rem}\n.mf-hero--md .mf-hero__title{font-size:clamp(2.0rem,5.0vw,3.0rem)}\n.mf-hero--split.mf-hero--md .mf-hero__title{font-size:clamp(1.70rem,3.10vw,2.34rem)}\n.mf-hero--lg{padding-block:6.5rem}\n.mf-hero--lg .mf-hero__title{font-size:clamp(2.4rem,6.5vw,4.2rem)}\n.mf-hero--split.mf-hero--lg .mf-hero__title{font-size:clamp(2.04rem,4.03vw,3.28rem)}\n.mf-hero--xl{padding-block:8.5rem}\n.mf-hero--xl .mf-hero__title{font-size:clamp(2.8rem,9.0vw,5.8rem)}\n.mf-hero--split.mf-hero--xl .mf-hero__title{font-size:clamp(2.38rem,5.58vw,4.52rem)}",
+   "css_tablet": "\n.mf-hero--split .mf-hero__inner{grid-template-columns:1fr;text-align:center;justify-items:center}\n.mf-hero--split .mf-hero__actions{justify-content:center}\n.mf-hero--split .mf-hero__visual{width:min(100%,32rem)}\n.mf-hero--split .mf-hero__title{max-width:18ch}\n.mf-hero--split.mf-hero--md .mf-hero__title{font-size:clamp(2.0rem,5.0vw,2.55rem)}\n.mf-hero--split.mf-hero--lg .mf-hero__title{font-size:clamp(2.4rem,6.5vw,3.57rem)}\n.mf-hero--split.mf-hero--xl .mf-hero__title{font-size:clamp(2.8rem,9.0vw,4.93rem)}",
+   "css_mobile": ".mf-hero.mf-hero--md{padding-block:3.0rem}\n.mf-hero.mf-hero--lg{padding-block:3.6rem}\n.mf-hero.mf-hero--xl{padding-block:4.7rem}\n.mf-hero__actions{width:100%}\n.mf-hero__actions .mf-btn{flex:1 1 100%}\n.mf-hero__subtitle{font-size:1.05rem}\n.mf-vis__chart{height:7rem}\n",
+   "example": {
+    "type": "hero",
+    "title": "Ship the thing",
+    "subtitle": "A short supporting line.",
+    "cta": "Get started",
+    "secondary_cta": "See how it works",
+    "layout": "split",
+    "size": "lg"
+   }
+  },
+  "features": {
+   "label": "Feature grid",
+   "description": "Titled grid of 1-8 features, each with an icon, a short title, and a sentence of body text.",
+   "css": "\n.mf-feature{padding:1.25rem 1rem}\n.mf-icon{display:inline-flex;align-items:center;justify-content:center;width:2.9rem;height:2.9rem;border-radius:min(var(--mf-radius-ctl),16px);background:var(--mf-tint);color:var(--mf-primary)}\n.mf-feature h3{margin:1.1rem 0 .5rem;font-size:1.2rem;letter-spacing:-.01em}\n.mf-feature p{color:var(--mf-muted)}\n",
+   "css_tablet": "",
+   "css_mobile": "",
+   "example": {
+    "type": "features",
+    "title": "Why teams switch",
+    "columns": 3,
+    "items": [
+     {
+      "title": "Fast",
+      "body": "Answers in seconds.",
+      "icon": "zap"
+     }
+    ]
+   }
+  },
+  "cards": {
+   "label": "Cards",
+   "description": "Grid of 1-9 cards for projects, articles, or products. Give an item a `stat` (e.g. '12.4k') to turn it into a metric tile - this is how dashboards are built. `meta` is a small label such as a category or delta.",
+   "css": "\n.mf-card{display:flex;flex-direction:column;gap:.55rem;padding:1.5rem;overflow:hidden;background:var(--mf-surface);border:1px solid var(--mf-border);border-radius:var(--mf-radius);box-shadow:var(--mf-shadow);transition:transform .2s ease,border-color .2s ease}\n.mf-card:hover{transform:translateY(-3px);border-color:var(--mf-border-strong)}\n.mf-card__thumb{height:8.5rem;margin:-1.5rem -1.5rem .65rem;background:linear-gradient(135deg,var(--mf-primary),var(--mf-secondary))}\n.mf-card:nth-child(3n+2) .mf-card__thumb{background:linear-gradient(135deg,var(--mf-secondary),var(--mf-accent))}\n.mf-card:nth-child(3n) .mf-card__thumb{background:linear-gradient(135deg,var(--mf-accent),var(--mf-primary))}\n.mf-card h3{font-size:1.15rem;letter-spacing:-.01em}\n.mf-card p{color:var(--mf-muted);font-size:.975rem}\n.mf-card__meta{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mf-muted)}\n.mf-card__stat{font-family:var(--mf-font-heading);font-weight:var(--mf-heading-weight);font-size:clamp(2rem,4vw,2.9rem);line-height:1;letter-spacing:-.03em}\n.mf-card--stat .mf-card__thumb{display:none}\n.mf-card--stat .mf-card__stat{order:1}\n.mf-card--stat h3{order:2;font-family:var(--mf-font-body);font-size:.95rem;font-weight:500;color:var(--mf-muted)}\n.mf-card--stat .mf-card__meta{order:3;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--mf-text)}\n.mf-card--stat p{order:4}\n",
+   "css_tablet": "",
+   "css_mobile": "",
+   "example": {
+    "type": "cards",
+    "title": "Selected work",
+    "columns": 3,
+    "items": [
+     {
+      "title": "Harbour Lights",
+      "body": "A month on the Baltic coast.",
+      "meta": "Editorial"
+     }
+    ]
+   }
+  },
+  "testimonials": {
+   "label": "Testimonials",
+   "description": "Full-width band of 1-6 short customer quotes with name and role. Avatars are initials (no images).",
+   "css": "\n.mf-band{background:var(--mf-surface);border-block:1px solid var(--mf-border)}\n.mf-quote{display:flex;flex-direction:column;justify-content:space-between;gap:1.5rem;margin:0;padding:1.6rem;background:var(--mf-bg);border:1px solid var(--mf-border);border-radius:var(--mf-radius)}\n.mf-quote blockquote{margin:0;font-size:1.05rem;line-height:1.6}\n.mf-quote blockquote::before{content:\"\\201C\";display:block;height:1.7rem;font:700 3rem/1 var(--mf-font-heading);color:var(--mf-primary)}\n.mf-quote figcaption{display:flex;align-items:center;gap:.8rem}\n.mf-avatar{display:inline-flex;align-items:center;justify-content:center;flex:0 0 2.6rem;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--mf-primary);color:var(--mf-on-primary);font-weight:700}\n.mf-quote__who{display:flex;flex-direction:column;line-height:1.3}\n.mf-quote__who strong{font-weight:600}\n.mf-quote__who span{color:var(--mf-muted);font-size:.9rem}\n",
+   "css_tablet": "",
+   "css_mobile": "",
+   "example": {
+    "type": "testimonials",
+    "title": "Kind words",
+    "items": [
+     {
+      "quote": "It replaced three tools for us.",
+      "name": "Ada Lovelace",
+      "role": "CTO, Analytical"
+     }
+    ]
+   }
+  },
+  "pricing": {
+   "label": "Pricing",
+   "description": "1-4 pricing tiers with price, feature list, and a button. Set highlighted=true on the recommended tier.",
+   "css": "\n.mf-tiers{align-items:stretch}\n.mf-tier{position:relative;display:flex;flex-direction:column;gap:.9rem;padding:1.75rem;background:var(--mf-surface);border:1px solid var(--mf-border);border-radius:var(--mf-radius);box-shadow:var(--mf-shadow)}\n.mf-tier.is-featured{border-color:var(--mf-primary);box-shadow:0 0 0 1px var(--mf-primary),var(--mf-shadow)}\n.mf-tier__flag{position:absolute;top:-.85rem;left:1.5rem;background:var(--mf-primary);color:var(--mf-on-primary);border-color:transparent}\n.mf-tier h3{font-size:1.15rem}\n.mf-tier__price{display:flex;align-items:baseline;gap:.4rem}\n.mf-tier__amount{font-family:var(--mf-font-heading);font-weight:var(--mf-heading-weight);font-size:2.6rem;line-height:1;letter-spacing:-.03em}\n.mf-tier__period{color:var(--mf-muted)}\n.mf-tier__desc{color:var(--mf-muted);font-size:.95rem}\n.mf-tier__features{flex:1;display:grid;gap:.65rem;margin:.4rem 0 0;padding:0;list-style:none}\n.mf-tier__features li{display:flex;align-items:flex-start;gap:.6rem;font-size:.95rem}\n.mf-tier__features svg{flex:0 0 1.1rem;width:1.1rem;height:1.1rem;margin-top:.2rem;color:var(--mf-primary)}\n.mf-tier .mf-btn{margin-top:1rem;background:transparent;color:var(--mf-text);border-color:var(--mf-border-strong)}\n.mf-tier.is-featured .mf-btn{background:var(--mf-primary);color:var(--mf-on-primary);border-color:transparent}\n",
+   "css_tablet": "",
+   "css_mobile": "",
+   "example": {
+    "type": "pricing",
+    "title": "Simple pricing",
+    "tiers": [
+     {
+      "name": "Starter",
+      "price": "$0",
+      "period": "/month",
+      "features": [
+       "1 project"
+      ],
+      "cta": "Start free"
+     },
+     {
+      "name": "Pro",
+      "price": "$29",
+      "period": "/month",
+      "features": [
+       "Unlimited projects"
+      ],
+      "cta": "Go Pro",
+      "highlighted": true
+     }
+    ]
+   }
+  },
+  "faq": {
+   "label": "FAQ",
+   "description": "Expandable question-and-answer list of 1-10 items (native <details>, no JavaScript).",
+   "css": "\n.mf-faq{display:grid;gap:.75rem;max-width:46rem;margin-inline:auto}\n.mf-faq__item{background:var(--mf-surface);border:1px solid var(--mf-border);border-radius:var(--mf-radius)}\n.mf-faq__item summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.35rem;cursor:pointer;font-weight:600;list-style:none}\n.mf-faq__item summary::-webkit-details-marker{display:none}\n.mf-faq__item summary::after{content:\"+\";flex:0 0 auto;font-size:1.5rem;line-height:1;color:var(--mf-primary);transition:transform .2s ease}\n.mf-faq__item[open] summary::after{transform:rotate(45deg)}\n.mf-faq__item summary:focus-visible{outline:2px solid var(--mf-accent);outline-offset:2px;border-radius:var(--mf-radius)}\n.mf-faq__item p{padding:0 1.35rem 1.25rem;color:var(--mf-muted)}\n",
+   "css_tablet": "",
+   "css_mobile": "",
+   "example": {
+    "type": "faq",
+    "title": "Questions",
+    "items": [
+     {
+      "question": "Can I cancel any time?",
+      "answer": "Yes, from your account page."
+     }
+    ]
+   }
+  },
+  "cta": {
+   "label": "CTA",
+   "description": "Closing call-to-action panel: headline, optional line of support, one button.",
+   "css": "\n.mf-cta__panel{position:relative;overflow:hidden;display:grid;justify-items:center;gap:1rem;padding:clamp(2.5rem,6vw,4.5rem) clamp(1.25rem,5vw,3rem);text-align:center;background:var(--mf-primary);color:var(--mf-on-primary);border-radius:var(--mf-radius)}\n.mf-cta__panel::before{content:\"\";position:absolute;inset:0;background:radial-gradient(70% 90% at 15% 0%,rgba(255,255,255,.22),transparent 60%);pointer-events:none}\n.mf-cta__panel>*{position:relative}\n.mf-cta__panel h2{max-width:22ch;color:inherit;font-size:clamp(1.8rem,4vw,2.8rem);text-wrap:balance}\n.mf-cta__panel p{max-width:34rem;font-size:1.1rem;opacity:.92}\n.mf-cta__btn{margin-top:.75rem;background:var(--mf-on-primary);color:var(--mf-primary);border-color:transparent}\n",
+   "css_tablet": "",
+   "css_mobile": "",
+   "example": {
+    "type": "cta",
+    "title": "Ready when you are",
+    "subtitle": "Set up in five minutes.",
+    "cta": "Start free"
+   }
+  },
+  "footer": {
+   "label": "Footer",
+   "description": "Closing footer with brand, tagline, up to 4 link columns (link labels only), and a copyright line. Must be last.",
+   "css": "\n.mf-footer{padding-block:4rem 2.5rem;background:var(--mf-surface);border-top:1px solid var(--mf-border)}\n.mf-footer__top{display:grid;grid-template-columns:1.3fr 2fr;gap:3rem}\n.mf-footer__brand{font-family:var(--mf-font-heading);font-weight:var(--mf-heading-weight);font-size:1.25rem}\n.mf-footer__tagline{max-width:22rem;margin-top:.6rem;color:var(--mf-muted)}\n.mf-footer__cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:2rem}\n.mf-footer h4{margin-bottom:.9rem;font-family:var(--mf-font-body);font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mf-muted)}\n.mf-footer ul{display:grid;gap:.55rem;margin:0;padding:0;list-style:none}\n.mf-footer li a{text-decoration:none;color:var(--mf-text)}\n.mf-footer li a:hover{text-decoration:underline}\n.mf-footer__legal{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--mf-border);font-size:.875rem;color:var(--mf-muted)}\n",
+   "css_tablet": "\n.mf-footer__top{grid-template-columns:1fr;gap:2.25rem}\n",
+   "css_mobile": "\n.mf-footer{padding-block:3rem 2rem}\n.mf-footer__cols{grid-template-columns:repeat(2,minmax(0,1fr))}\n",
+   "example": {
+    "type": "footer",
+    "brand": "Acme",
+    "tagline": "Software for people who ship.",
+    "columns": [
+     {
+      "title": "Product",
+      "links": [
+       "Features",
+       "Pricing"
+      ]
+     }
+    ],
+    "copyright": "© 2026 Acme, Inc."
+   }
+  }
+ }
+}

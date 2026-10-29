@@ -1,0 +1,383 @@
+@import "tailwindcss" source("../");
+
+/* `dark:` follows the app's own [data-theme] switch, not the OS setting (what `darkMode: ["selector", ...]` meant in Tailwind 3). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens (these used to live in tailwind.config.ts). Colours read the CSS variables below, so a theme switch needs no rebuild. */
+@theme inline {
+  --color-bg: rgb(var(--bg));
+  --color-panel: rgb(var(--panel));
+  --color-raised: rgb(var(--raised));
+  --color-sunken: rgb(var(--sunken));
+  --color-line: rgb(var(--line));
+  --color-fg: rgb(var(--fg));
+  --color-muted: rgb(var(--muted));
+  --color-faint: rgb(var(--faint));
+  --color-accent: rgb(var(--accent));
+  --color-accent-fg: rgb(var(--accent-fg));
+  --color-accent-2: rgb(var(--accent-2));
+  --color-accent-3: rgb(var(--accent-3));
+  --color-ok: rgb(var(--ok));
+  --color-warn: rgb(var(--warn));
+  --color-err: rgb(var(--err));
+  --color-info: rgb(var(--info));
+}
+@theme {
+  --font-display: "SF Pro Display", "Segoe UI Variable Display", "Inter Display", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /*
+    Tailwind 3 gave each text size an absolute line-height (text-sm = 1.25rem) which nested text inherited as-is.
+    Tailwind 4 uses a unitless ratio instead, so smaller text nested inside a sized parent got proportionally
+    shorter lines (text-[11px] inside text-sm: 20px -> 15.7px) and layouts shifted. These restore the v3 values.
+  */
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl--line-height: 1;
+  --text-6xl--line-height: 1;
+  --text-7xl--line-height: 1;
+  --text-8xl--line-height: 1;
+  --text-9xl--line-height: 1;
+
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+
+  --shadow-pop: 0 12px 40px -12px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(var(--line));
+  --shadow-card: 0 1px 0 rgb(var(--line)), 0 8px 24px -16px rgb(0 0 0 / 0.25);
+  --shadow-glow: 0 0 0 1px rgb(var(--accent) / 0.35), 0 8px 32px -8px rgb(var(--accent) / 0.45);
+
+  --animate-pulse-dot: pulseDot 1.2s ease-in-out infinite;
+  --animate-rise: rise 0.28s ease-out both;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+
+  @keyframes pulseDot { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+}
+
+/*
+  space-y-* as it worked in Tailwind 3: margin-top on every visible sibling after the first, strong enough (specificity 0,3,0)
+  to beat a child's own margin utilities. Tailwind 4 instead puts margin-bottom on every sibling but the last, at zero
+  specificity. That changes spacing for children that carry their own margins and for inline-level children (range inputs,
+  selects, inline buttons), so restore the v3 rule exactly.
+
+  The built-in v4 rule is still generated next to this one, so the second block cancels what it does to the first child
+  (every later child is already zeroed by the first rule). It has zero specificity and comes later in the same layer, so
+  it wins over the built-in but still loses to a child's own mb-* class, exactly as in v3.
+*/
+@utility space-y-* {
+  & > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * --value(number));
+    margin-bottom: 0;
+  }
+}
+@layer utilities {
+  :where([class*="space-y-"] > :first-child:not(:last-child)) { margin-bottom: 0; }
+
+  /*
+    Continuous (squircle) corners next to the existing radius. Chromium draws them; every other browser ignores the
+    property and keeps the plain radius. Pills and dots (rounded-full) stay circular on purpose.
+  */
+  :where(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl) { corner-shape: squircle; }
+}
+
+/*
+  Tailwind 4 changed a few base defaults. These keep the look the app had on Tailwind 3:
+  - border colour defaulted to grey-200 (now currentColor),
+  - buttons showed a pointer cursor (now the default arrow),
+  - placeholders were grey-400 (now the text colour at 50%).
+  Every border in the app names its own colour, so the first is only a safety net.
+*/
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button { border-color: var(--color-gray-200, currentcolor); }
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+  input::placeholder, textarea::placeholder { color: var(--color-gray-400); }
+
+  /* Headings and short titles wrap into even lines; paragraphs avoid a lone last word. Base layer, so a utility like
+     `truncate` (white-space: nowrap) still wins on the one-line titles in headers and lists. */
+  h1, h2, h3, h4, h5, h6, [role="heading"] { text-wrap: balance; }
+  p, li, dd, blockquote, figcaption { text-wrap: pretty; }
+}
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: 248 248 252; --panel: 255 255 255; --raised: 243 243 249; --sunken: 237 237 245; --line: 225 225 236;
+  --fg: 17 17 27; --muted: 88 88 108; --faint: 104 104 126;
+  --accent: 99 70 240; --accent-fg: 255 255 255; --accent-2: 8 145 178; --accent-3: 219 39 119;
+  --ok: 21 128 61; --warn: 161 98 7; --err: 220 38 38; --info: 37 99 235;
+  --aurora-opacity: 0.22;
+  --hl-comment: 128 128 150; --hl-keyword: 175 55 160; --hl-string: 21 128 61; --hl-number: 194 65 12; --hl-title: 79 70 229; --hl-attr: 161 98 7;
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 9 9 14; --panel: 16 16 24; --raised: 25 25 37; --sunken: 6 6 10; --line: 39 39 56;
+  --fg: 240 240 248; --muted: 162 162 184; --faint: 132 132 158;
+  --accent: 162 139 255; --accent-fg: 12 8 28; --accent-2: 34 211 238; --accent-3: 244 114 182;
+  --ok: 52 211 153; --warn: 251 191 36; --err: 248 113 113; --info: 96 165 250;
+  --aurora-opacity: 0.4;
+  --hl-comment: 120 120 145; --hl-keyword: 244 114 182; --hl-string: 110 231 183; --hl-number: 253 186 116; --hl-title: 165 180 252; --hl-attr: 252 211 77;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: 9 9 14; --panel: 16 16 24; --raised: 25 25 37; --sunken: 6 6 10; --line: 39 39 56;
+    --fg: 240 240 248; --muted: 162 162 184; --faint: 132 132 158;
+    --accent: 162 139 255; --accent-fg: 12 8 28; --accent-2: 34 211 238; --accent-3: 244 114 182;
+    --ok: 52 211 153; --warn: 251 191 36; --err: 248 113 113; --info: 96 165 250;
+    --aurora-opacity: 0.4;
+    --hl-comment: 120 120 145; --hl-keyword: 244 114 182; --hl-string: 110 231 183; --hl-number: 253 186 116; --hl-title: 165 180 252; --hl-attr: 252 211 77;
+  }
+}
+
+html, body { height: 100%; }
+
+/* Safe areas (notch, Dynamic Island, home indicator, rounded corners). Zero on screens without them. */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+@utility pt-safe { padding-top: var(--safe-top); }
+@utility pr-safe { padding-right: var(--safe-right); }
+@utility pb-safe { padding-bottom: var(--safe-bottom); }
+@utility pl-safe { padding-left: var(--safe-left); }
+@utility px-safe { padding-left: var(--safe-left); padding-right: var(--safe-right); }
+body { @apply bg-bg text-fg font-sans antialiased; font-feature-settings: "cv11", "ss01"; }
+::selection { background: rgb(var(--accent) / 0.28); }
+* { scrollbar-width: thin; scrollbar-color: rgb(var(--line)) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+/* In the base layer so a field's own focus ring (outline-hidden + ring-*) replaces it instead of doubling up. */
+@layer base { :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; } }
+button { -webkit-tap-highlight-color: transparent; }
+
+/*
+  Interruptible motion. Anything a person can open and close (menus, popovers, toasts, dialogs, the "Latest" button)
+  uses transitions, never keyframes: a transition interrupted halfway turns around from where it is. Menus stay mounted
+  and toggle [hidden]; `display` transitions discretely so the exit plays, and @starting-style gives the entrance.
+  Movement uses a spring-shaped curve; opacity a plain ease-out. Nothing here blocks input: a closing menu is inert.
+  Reduced motion: the global rule at the end of this file cuts every duration to ~0.
+  .pop sets `translate`, so it is not for elements positioned with translate-* utilities (use .fade there).
+*/
+:root {
+  --ease-spring: linear(0, 0.06 2.2%, 0.23 4.9%, 0.73 12.6%, 0.92 17.4%, 1.01 22%, 1.035 26.6%, 1.03 31.6%, 1.008 41.6%, 0.998 54%, 1);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pop { transition: opacity 140ms var(--ease-out), translate 240ms var(--ease-spring), scale 240ms var(--ease-spring), display 240ms allow-discrete; }
+.pop[hidden] { opacity: 0; translate: 0 6px; scale: 0.98; }
+.pop-up[hidden] { translate: 0 -6px; }
+.fade { transition: opacity 160ms var(--ease-out), display 160ms allow-discrete; }
+.fade[hidden] { opacity: 0; }
+@starting-style {
+  .pop { opacity: 0; translate: 0 6px; scale: 0.98; }
+  .pop-up { translate: 0 -6px; }
+  .fade { opacity: 0; }
+}
+
+/*
+  View transitions (same page: tab switches, see lib/viewTransition.ts). Short, so they never feel like waiting, and
+  click-through: the real page underneath is already the new one, so input is never blocked while it plays.
+*/
+::view-transition { pointer-events: none; }
+::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation-duration: 180ms; animation-timing-function: var(--ease-out); }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ============================================================== Aurora effects
+   Ambient decoration (aurora, beams, shimmer) loops with keyframes: nothing a person interrupts. Interactive things
+   (spotlight, tilt, dock, pills, toasts) move with transitions or Motion springs. The reduced-motion rule at the end
+   of this file freezes every keyframe and transition; Motion follows the OS setting via <MotionConfig>. */
+.surface-grain {
+  background-image:
+    radial-gradient(1200px 520px at 75% -10%, rgb(var(--accent) / 0.10), transparent 60%),
+    radial-gradient(900px 420px at -10% 110%, rgb(var(--accent-2) / 0.07), transparent 60%);
+}
+/* Slow drifting colour fields behind the whole app. */
+.aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: var(--aurora-opacity); }
+.aurora > span { position: absolute; border-radius: 9999px; filter: blur(90px); will-change: transform; animation: auroraDrift 38s ease-in-out infinite alternate; }
+.aurora > span:nth-child(1) { width: 46vmax; height: 46vmax; left: -12vmax; top: -18vmax; background: rgb(var(--accent)); }
+.aurora > span:nth-child(2) { width: 38vmax; height: 38vmax; right: -14vmax; top: 8vmax; background: rgb(var(--accent-3)); animation-duration: 46s; animation-delay: -12s; }
+.aurora > span:nth-child(3) { width: 42vmax; height: 42vmax; left: 30vmax; bottom: -26vmax; background: rgb(var(--accent-2)); animation-duration: 52s; animation-delay: -24s; }
+@keyframes auroraDrift { 0% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(6vmax, 4vmax, 0) scale(1.12); } 100% { transform: translate3d(-4vmax, 7vmax, 0) scale(0.94); } }
+
+.glass { background: rgb(var(--panel) / 0.72); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); }
+.dotgrid { background-image: radial-gradient(rgb(var(--fg) / 0.07) 1px, transparent 1px); background-size: 18px 18px; }
+
+/* Animated gradient text. */
+.text-gradient {
+  background: linear-gradient(100deg, rgb(var(--accent)) 0%, rgb(var(--accent-3)) 35%, rgb(var(--accent-2)) 65%, rgb(var(--accent)) 100%);
+  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gradientPan 8s linear infinite;
+}
+@keyframes gradientPan { to { background-position: -220% 0; } }
+
+/* The live activity line: muted text with a light sweeping across it (what the agent is doing right now). */
+.text-shine {
+  background: linear-gradient(90deg, rgb(var(--muted)) 0%, rgb(var(--muted)) 38%, rgb(var(--fg)) 50%, rgb(var(--muted)) 62%, rgb(var(--muted)) 100%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: textShine 2.4s linear infinite;
+}
+@keyframes textShine { from { background-position: 125% 0; } to { background-position: -125% 0; } }
+
+/* Cursor-following light on cards and buttons (Spotlight sets --mx/--my). */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none; opacity: 0;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--accent) / 0.16), transparent 70%);
+  transition: opacity 200ms var(--ease-out);
+}
+.spotlight:hover::before, .spotlight:focus-visible::before { opacity: 1; }
+/* The border lights up near the cursor too. */
+.spotlight::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--accent) / 0.85), rgb(var(--accent-2) / 0.35) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  transition: opacity 200ms var(--ease-out);
+}
+.spotlight:hover::after, .spotlight:focus-visible::after { opacity: 1; }
+
+/* Primary buttons: gradient fill with a light sweep on hover (a transition, so it reverses when the cursor leaves). */
+.btn-glow { background-image: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-3) / 0.92) 120%); box-shadow: 0 1px 0 rgb(255 255 255 / 0.22) inset, 0 0 0 1px rgb(255 255 255 / 0.06) inset, 0 6px 20px -6px rgb(var(--accent) / 0.6); position: relative; overflow: hidden; }
+.btn-glow:hover { box-shadow: 0 1px 0 rgb(255 255 255 / 0.28) inset, 0 0 0 1px rgb(255 255 255 / 0.1) inset, 0 10px 28px -6px rgb(var(--accent) / 0.75); }
+
+/* Secondary buttons: a raised surface with a hairline top highlight, like a physical key. */
+.btn-surface {
+  background: linear-gradient(180deg, rgb(var(--raised) / 0.95), rgb(var(--panel) / 0.9));
+  box-shadow: 0 0 0 1px rgb(var(--line)), 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 2px 6px -2px rgb(0 0 0 / 0.3);
+}
+.btn-surface:hover { box-shadow: 0 0 0 1px rgb(var(--accent) / 0.45), 0 1px 0 rgb(255 255 255 / 0.07) inset, 0 8px 22px -10px rgb(var(--accent) / 0.55); }
+
+/* Dialog panel: frosted, with a faint inner edge and a deep, soft drop shadow. */
+.dialog-surface {
+  background: linear-gradient(180deg, rgb(var(--raised) / 0.92), rgb(var(--panel) / 0.96) 140px);
+  backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  box-shadow: 0 0 0 1px rgb(var(--line)), 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 30px 80px -20px rgb(0 0 0 / 0.65), 0 0 120px -40px rgb(var(--accent) / 0.35);
+}
+
+/* Floating layers (selects, model lists, popovers) grow out of their trigger on the spring curve. */
+.layer-pop { transform-origin: var(--radix-select-content-transform-origin, var(--radix-popover-content-transform-origin)); transition: opacity 140ms var(--ease-out), scale 220ms var(--ease-spring); }
+@starting-style { .layer-pop { opacity: 0; scale: 0.96; } }
+.check-pop { transition: scale 260ms var(--ease-spring); }
+@starting-style { .check-pop { scale: 0.4; } }
+.btn-glow::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%); translate: -120% 0; transition: translate 600ms var(--ease-out); pointer-events: none; }
+.btn-glow:hover::after { translate: 120% 0; }
+
+/* A light beam running around a border (the composer while Morphie works). */
+@property --beam { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.border-beam { position: relative; }
+.border-beam::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: conic-gradient(from var(--beam), transparent 0deg, rgb(var(--accent)) 50deg, rgb(var(--accent-2)) 90deg, transparent 140deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: beamSpin 2.8s linear infinite;
+}
+@keyframes beamSpin { to { --beam: 360deg; } }
+
+/* Skeleton shimmer. */
+.shimmer { background: linear-gradient(90deg, rgb(var(--line) / 0.7) 0%, rgb(var(--line) / 1) 40%, rgb(var(--line) / 0.7) 80%); background-size: 200% 100%; animation: skeletonSweep 1.6s linear infinite; }
+@keyframes skeletonSweep { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* A soft halo for the live/working orb. */
+.orb { background: conic-gradient(from 0deg, rgb(var(--accent)), rgb(var(--accent-3)), rgb(var(--accent-2)), rgb(var(--accent))); animation: orbSpin 6s linear infinite; }
+@keyframes orbSpin { to { rotate: 360deg; } }
+
+.marquee { display: flex; gap: 0.5rem; width: max-content; animation: marquee 40s linear infinite; }
+.marquee-wrap:hover .marquee { animation-play-state: paused; }
+@keyframes marquee { to { translate: -50% 0; } }
+
+/* ---------- markdown ---------- */
+.md { font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+.md > *:first-child { margin-top: 0; }
+.md > *:last-child { margin-bottom: 0; }
+.md p { margin: 0.75em 0; }
+.md h1, .md h2, .md h3, .md h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.25; margin: 1.4em 0 0.5em; letter-spacing: -0.01em; }
+.md h1 { font-size: 1.55em; } .md h2 { font-size: 1.3em; } .md h3 { font-size: 1.12em; } .md h4 { font-size: 1em; }
+.md ul, .md ol { margin: 0.7em 0; padding-left: 1.4em; } .md ul { list-style: disc; } .md ol { list-style: decimal; }
+.md li { margin: 0.25em 0; } .md li::marker { color: rgb(var(--faint)); }
+.md a { color: rgb(var(--accent)); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.md blockquote { border-left: 3px solid rgb(var(--line)); padding-left: 1em; color: rgb(var(--muted)); margin: 1em 0; }
+.md hr { border: 0; border-top: 1px solid rgb(var(--line)); margin: 1.5em 0; }
+.md code:not(pre code) { font-family: var(--font-mono); font-size: 0.86em; background: rgb(var(--sunken)); border: 1px solid rgb(var(--line)); padding: 0.1em 0.38em; border-radius: 6px; }
+.md table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.93em; display: block; overflow-x: auto; }
+.md th, .md td { border: 1px solid rgb(var(--line)); padding: 0.45em 0.75em; text-align: left; }
+.md th { background: rgb(var(--sunken)); font-weight: 600; }
+.md table { font-variant-numeric: tabular-nums; }
+.md img { max-width: 100%; border-radius: 10px; corner-shape: squircle; }
+.md pre { margin: 0; }
+.hljs { background: transparent !important; color: rgb(var(--fg)); }
+.hljs-comment, .hljs-quote { color: rgb(var(--hl-comment)); font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-built_in, .hljs-doctag { color: rgb(var(--hl-keyword)); }
+.hljs-string, .hljs-regexp, .hljs-addition, .hljs-meta .hljs-string { color: rgb(var(--hl-string)); }
+.hljs-number, .hljs-symbol, .hljs-bullet { color: rgb(var(--hl-number)); }
+.hljs-title, .hljs-section, .hljs-class .hljs-title, .hljs-function .hljs-title { color: rgb(var(--hl-title)); }
+.hljs-attr, .hljs-attribute, .hljs-variable, .hljs-template-variable, .hljs-type, .hljs-name { color: rgb(var(--hl-attr)); }
+.hljs-deletion { color: rgb(var(--err)); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* Switch knob and tooltips move on the spring curve; interrupted, they turn around from where they are. */
+.switch-knob { transition: left 320ms var(--ease-spring), width 220ms var(--ease-spring), box-shadow 200ms; }
+.tip { transform-origin: var(--radix-tooltip-content-transform-origin); transition: opacity 120ms var(--ease-out), scale 160ms var(--ease-spring); }
+@starting-style { .tip { opacity: 0; scale: 0.94; } }
+/* Radix menus open from where they're anchored, on the spring curve. */
+.menu { transform-origin: var(--radix-dropdown-menu-content-transform-origin); transition: opacity 140ms var(--ease-out), scale 220ms var(--ease-spring); }
+@starting-style { .menu { opacity: 0; scale: 0.95; } }
+/* An Undo toast's remaining time (decoration: the toast itself carries the real timer). */
+.toast-timer { animation: toastTimer linear forwards; }
+@keyframes toastTimer { from { scale: 1 1; } to { scale: 0 1; } }
+
+/* Brand tiles: a dark glass chip lit from above in the brand's own colour. */
+.brand-tile {
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgb(var(--tint) / 0.28), transparent 70%),
+    linear-gradient(180deg, rgb(var(--raised)), rgb(var(--sunken)));
+  box-shadow: 0 0 0 1px rgb(var(--line)), 0 1px 0 rgb(255 255 255 / 0.07) inset, 0 6px 16px -10px rgb(var(--tint) / 0.8);
+}
+.brand-tile-active, .group:hover > .brand-tile, .group:focus-visible > .brand-tile {
+  box-shadow: 0 0 0 1px rgb(var(--tint) / 0.55), 0 1px 0 rgb(255 255 255 / 0.1) inset, 0 8px 22px -8px rgb(var(--tint) / 0.9);
+}
+
+/* Settings cards: the same raised glass as dialogs, quieter. */
+.card-surface {
+  background: linear-gradient(180deg, rgb(var(--panel) / 0.85), rgb(var(--panel) / 0.7));
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 0 0 1px rgb(var(--line)), 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -20px rgb(0 0 0 / 0.5);
+}
+
+/* Rows in the Account → Sign-in methods list. */
+.method-row { border-radius: 14px; padding: 12px; background: rgb(var(--sunken) / 0.45); box-shadow: 0 0 0 1px rgb(var(--line) / 0.8); transition: box-shadow 200ms var(--ease-out), background-color 200ms var(--ease-out); }
+.method-row:hover { background: rgb(var(--raised) / 0.55); box-shadow: 0 0 0 1px rgb(var(--faint) / 0.35); }
+.method-row-on { box-shadow: 0 0 0 1px rgb(var(--ok) / 0.3); background: linear-gradient(90deg, rgb(var(--ok) / 0.06), transparent 60%); }
+
+/* Chat: the user's bubble and code windows. */
+.user-bubble {
+  background: linear-gradient(135deg, rgb(var(--accent) / 0.3), rgb(var(--accent-3) / 0.16));
+  box-shadow: 0 0 0 1px rgb(var(--accent) / 0.28), 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 10px 30px -18px rgb(var(--accent) / 0.8);
+}
+.code-window { background: rgb(var(--sunken)); box-shadow: 0 0 0 1px rgb(var(--line)), 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 16px 40px -28px rgb(0 0 0 / 0.8); }
+.md table { border-collapse: separate; border-spacing: 0; border: 1px solid rgb(var(--line)); border-radius: 12px; overflow: hidden; }
+.md th, .md td { border: 0; border-bottom: 1px solid rgb(var(--line)); }
+.md tr:last-child td { border-bottom: 0; }
+.md th + th, .md td + td { border-left: 1px solid rgb(var(--line) / 0.6); }
+.md tbody tr:hover td { background: rgb(var(--fg) / 0.03); }
+.md blockquote { border-left: 3px solid rgb(var(--accent) / 0.5); background: rgb(var(--accent) / 0.05); border-radius: 0 10px 10px 0; padding: 0.6em 1em; }
+.md a { transition: color 150ms, text-decoration-color 150ms; text-decoration-color: rgb(var(--accent) / 0.4); }
+.md a:hover { text-decoration-color: rgb(var(--accent)); }
+.md code:not(pre code) { color: rgb(var(--accent-3)); }
+.md table { width: max-content; max-width: 100%; }
+
+/* Documents: a file-type tile and chip tinted by --tint (an rgb triplet). */
+.doc-tile { color: rgb(var(--tint)); background: linear-gradient(180deg, rgb(var(--tint) / 0.22), rgb(var(--tint) / 0.06)); box-shadow: 0 0 0 1px rgb(var(--tint) / 0.3) inset, 0 8px 20px -12px rgb(var(--tint) / 0.9); }
+.doc-chip { color: rgb(var(--tint)); background: rgb(var(--tint) / 0.1); box-shadow: 0 0 0 1px rgb(var(--tint) / 0.25) inset; }
