@@ -2,6 +2,7 @@
   "name": "morphie",
   "version": "2.0.0",
   "private": true,
+  "license": "AGPL-3.0-only",
   "description": "Morphie: a multi-provider AI workspace with chat, an autonomous agent, documents, memory and a design studio.",
   "scripts": {
     "dev": "next dev -H 127.0.0.1",

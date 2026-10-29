@@ -344,3 +344,11 @@ Covered: every provider wire format (mock servers, including prompt-cache usage 
 - **Model IDs change quickly.** Presets use conservative defaults; use **Fetch** to list what your key can actually use.
 - **Fonts** are system stacks (no network needed). **Embeddings** are local hashing, good for keyword-ish retrieval and not a substitute for a neural embedding model on large corpora.
 - **Data from the old Flask app is not migrated** (it kept one in-memory conversation per session, so there's little to carry over).
+
+## License
+
+Copyright (C) 2026 Archit Aggarwal.
+
+Morphie is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License, version 3 (`AGPL-3.0-only`), as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See [LICENSE](LICENSE) for the full text.
+
+If you run a modified version of Morphie for other people over a network, the AGPL asks you to offer them its source code.
